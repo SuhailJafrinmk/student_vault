@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "171982974737",
+    "project_id": "student-vault",
+    "storage_bucket": "student-vault.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171982974737:android:be7293f7fb40ea05c5a6b0",
+        "android_client_info": {
+          "package_name": "com.example.student_vault"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdEGo_Ejd1zH_dy3vBMgKpgVFxJ2vIIT0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
