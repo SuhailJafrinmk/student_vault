@@ -9,7 +9,8 @@ final class AuthInitial extends AuthState {}
 
 class LogginLoadedState extends AuthActionState{}
 
-class RegisterPageNavigatedState extends AuthActionState{}
+class RegisterPageNavigateState extends AuthActionState{
+}
 
 class LoginPageNavigatedState extends AuthActionState{}
 

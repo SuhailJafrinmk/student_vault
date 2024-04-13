@@ -15,7 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   User? user;
   AuthBloc() : super(AuthInitial()) {
     on<LoginPageNavigateEvent>(loginPageNavigateEvent);
-    on<RegisterPageNavigateEvent>(registerPageNavigateEvent);
+    on<LoginPageSignupButtonClickedEvent>(loginPageSignupButtonClickedEvent);
     on<LoginButtonClickedEvent>(loginButtonClickedEvent);
     on<RegisterButtonClickedEvent>(registerButtonClickedEvent);
   }
@@ -24,10 +24,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       LoginPageNavigateEvent event, Emitter<AuthState> emit) {
     emit(LoginPageNavigatedState());
   }
-
-  FutureOr<void> registerPageNavigateEvent(
-      RegisterPageNavigateEvent event, Emitter<AuthState> emit) {
-    emit(RegisterPageNavigatedState());
+  
+  //function to emit state for navigating to sign up page
+  FutureOr<void> loginPageSignupButtonClickedEvent(
+      LoginPageSignupButtonClickedEvent event, Emitter<AuthState> emit) { 
+    emit(RegisterPageNavigateState());
+    print('the state of sign up button clicked is emitted');
   }
 
   FutureOr<void> loginButtonClickedEvent(
@@ -48,9 +50,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   FutureOr<void> registerButtonClickedEvent(
       RegisterButtonClickedEvent event, Emitter<AuthState> emit) async {
         print('funtoin stareted');
-        emit(LogginLoadedState());
+        
     try {
-      print(event.email);print(event.password);
+      emit(LogginLoadedState());
       UserCredential credential =
           await firebaseAuth.createUserWithEmailAndPassword(
               email: event.email, password: event.password);

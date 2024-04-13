@@ -1,6 +1,4 @@
 import 'dart:ui';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:student_vault/controller/auth/bloc/auth_bloc.dart';
@@ -34,33 +32,35 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if(state is LogginLoadedState){
-          Center(child: CircularProgressIndicator(value: 100,backgroundColor: Colors.white,));
-        }
-        else if (state is LoginPageNavigatedState) {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => HomePageWrapper()),
-              (route) => false);
-        } else if (state is LoggedInErrorState) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.message)));
-        } else if (state is RegisterPageNavigatedState) {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const SignUpPageWrapper()));
-        }
-      },
-      builder: (context, state) {
-        final double height = MediaQuery.of(context).size.height;
-        final double width = MediaQuery.of(context).size.width;
-
-        return Scaffold(
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
+    return BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is RegisterPageNavigateState) {
+            print('printing on login page');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SignUpPageWrapper()));
+          } else if (state is LogginLoadedState) {
+            showDialog(
+                context: context,
+                builder: (context) => Center(
+                      child: CircularProgressIndicator(
+                        color: secondary,
+                      ),
+                    ));
+          } else if (state is LoggedInSuccessState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Logged in successfully')));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => HomePageWrapper()));
+          }
+        },
+        child: Scaffold(
           body: SingleChildScrollView(
             child: Container(
               height: height,
@@ -76,8 +76,8 @@ class _LoginPageState extends State<LoginPage> {
                             width: width * .7,
                             height: height * .4,
                             color: primary,
-                            duration: const Duration(seconds: 1),
-                            swingRange: 20),
+                            duration: const Duration(seconds: 2),
+                            swingRange: 10),
                       )),
                   Positioned(
                       bottom: 0,
@@ -87,10 +87,9 @@ class _LoginPageState extends State<LoginPage> {
                             width: width * .7,
                             height: height * .4,
                             color: secondary,
-                            duration: Duration(seconds: 1),
-                            swingRange: 20),
+                            duration: Duration(seconds: 2),
+                            swingRange: 10),
                       )),
-                  
                   Positioned(
                       top: height * .35,
                       left: 10,
@@ -109,18 +108,27 @@ class _LoginPageState extends State<LoginPage> {
                               key: formkey,
                               child: Column(
                                 children: [
-                                  SizedBox(height: 15,),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
                                   setText(
-                                      text: 'Welcome Back!!!', size: 40, color: Colors.white),
+                                      text: 'Welcome Back!!!',
+                                      size: 40,
+                                      color: Colors.white),
                                   SizedBox(
                                     height: 30,
                                   ),
                                   TextfieldCustom(
-                                    labelText: 'Email',
+                                      labelText: 'Email',
                                       controller: emailController,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'please provide an email';
+                                          return 'Email is required.';
+                                        }
+                                        final emailRegExp = RegExp(
+                                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                                        if (!emailRegExp.hasMatch(value)) {
+                                          return 'Invalid email address.';
                                         }
                                         return null;
                                       }),
@@ -128,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                                     height: 10,
                                   ),
                                   TextfieldCustom(
-                                    labelText: 'Password',
+                                      labelText: 'Password',
                                       controller: passwordController,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -142,11 +150,13 @@ class _LoginPageState extends State<LoginPage> {
                                   CustomButton(
                                     onTap: () async {
                                       if (formkey.currentState!.validate()) {
-                                         
                                         BlocProvider.of<AuthBloc>(context).add(
                                             LoginButtonClickedEvent(
                                                 email: emailController.text,
-                                                password: passwordController.text));
+                                                password:
+                                                    passwordController.text));
+                                      }else{
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Invalid credentials')));
                                       }
                                     },
                                     height: 60,
@@ -170,10 +180,12 @@ class _LoginPageState extends State<LoginPage> {
                                           color: Colors.white),
                                       TextButton(
                                           onPressed: () {
-                                      BlocProvider.of<AuthBloc>(context).add(RegisterPageNavigateEvent());
+                                            BlocProvider.of<AuthBloc>(context).add(
+                                                LoginPageSignupButtonClickedEvent());
                                           },
                                           child: setText(
-                                              text: 'SignUp', color: secondary)),
+                                              text: 'SignUp',
+                                              color: secondary)),
                                     ],
                                   ),
                                 ],
@@ -186,8 +198,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-        );
-      },
-    );
+        ));
   }
 }

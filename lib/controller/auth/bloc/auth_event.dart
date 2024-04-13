@@ -5,7 +5,10 @@ sealed class AuthEvent {}
 
 class LoginPageNavigateEvent extends AuthEvent{}
 
-class RegisterPageNavigateEvent extends AuthEvent{}
+//event on signup button clicked on login page
+class LoginPageSignupButtonClickedEvent extends AuthEvent{}
+  
+
 
 class LoginButtonClickedEvent extends AuthEvent{
   final String email;
