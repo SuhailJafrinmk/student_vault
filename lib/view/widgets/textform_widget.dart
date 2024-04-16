@@ -10,6 +10,7 @@ class TextfieldCustom extends StatelessWidget {
     required this.validator,
     this.labelText,
     this.prefixIcon,
+    this.suffix
   }) : super(key: key);
   final TextInputType? keyboard;
   final Icon? icon;
@@ -18,14 +19,15 @@ class TextfieldCustom extends StatelessWidget {
   final String? Function(String?)? validator;
   final String? labelText;
   final Icon ? prefixIcon;
+  final Widget ? suffix;
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         minHeight: 40
       ),
       child: TextFormField(
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.white,
           fontSize: 20
         ),
@@ -34,12 +36,18 @@ class TextfieldCustom extends StatelessWidget {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         controller: controller,
         decoration: InputDecoration(
+          errorStyle: const TextStyle(
+            fontSize: 12,
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
+          suffix: suffix,
           prefixIcon: prefixIcon,
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
             color: Colors.white
           ),
           labelText: labelText,
-          disabledBorder:OutlineInputBorder(
+          disabledBorder:const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.purple),
           ), 
           hintText: hint,
@@ -54,7 +62,7 @@ class TextfieldCustom extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          errorBorder: OutlineInputBorder(
+          errorBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(20),
             ),
@@ -62,7 +70,7 @@ class TextfieldCustom extends StatelessWidget {
               color: Colors.red, // Match the color of the error border with the regular border
             ),
           ),
-          focusedBorder: OutlineInputBorder(
+          focusedBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(20),
             ),
@@ -70,7 +78,7 @@ class TextfieldCustom extends StatelessWidget {
               color: Color.fromARGB(255, 93, 201, 173),
             ),
           ),
-          focusedErrorBorder: OutlineInputBorder(
+          focusedErrorBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(20),
             ),

@@ -6,7 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:student_vault/controller/home/bloc/home_bloc.dart';
 import 'package:student_vault/view/constants/constants.dart';
 import 'package:student_vault/view/screens/additional_details.dart';
+import 'package:student_vault/view/screens/course_details.dart';
+import 'package:student_vault/view/screens/edit_profile.dart';
+import 'package:student_vault/view/screens/login_screen.dart';
 import 'package:student_vault/view/screens/profile_view.dart';
+import 'package:student_vault/view/screens/time_table.dart';
+import 'package:student_vault/view/screens/user_location_page.dart';
 import 'package:student_vault/view/widgets/custom_button.dart';
 import 'package:student_vault/view/widgets/custom_tile.dart';
 
@@ -33,6 +38,7 @@ class _HomePageState extends State<HomePage> {
   final currentuser = FirebaseAuth.instance.currentUser;
   String defaultImage =
       'https://res.cloudinary.com/dccos4vab/image/upload/v1712903228/73-730477_first-name-profile-image-placeholder-png_ddrkew.png';
+  late BuildContext dialogueContext;
   @override
   Widget build(BuildContext context) {
     return BlocListener<HomeBloc, HomeState>(
@@ -41,22 +47,50 @@ class _HomePageState extends State<HomePage> {
           showDialog(
               context: context,
               builder: (context) {
+                dialogueContext = context;
                 return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                    child: CircularProgressIndicator(
+                  color: secondary,
+                ));
               });
         } else if (state is ImageAddedCompletedState) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('image added')));
-        } else if (state is NavigateToAddDetailsPageState) {
+          Navigator.of(dialogueContext).pop();
+        }else if(state is ImageAddingErrorState){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+         else if (state is NavigateToAddDetailsPageState) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => AddDetailsWrapper()));
-        }else if(state is NavigateToViewProfilePageState){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewProfilePage()));
+        } else if (state is NavigateToViewProfilePageState) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ViewProfilePage()));
+        } else if (state is LogoutErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error occured while signing out')));
+        } else if (state is LogoutSuccessState) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('User Logged out')));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const LoginPageWrapper()));
+        } else if (state is NavigateToCourseDetailsState) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const CourseDetails()));
+        } else if (state is NavigateToTimeTablePageState) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => TimetableScreen()));
+        } else if (state is NavigateToEditProfilePageState) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => EditPageWrapper()));
+        } else if (state is NavigateToLocationPageState) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => LocationPageWrapper()));
         }
       },
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: setText(
               size: 25,
               color: Colors.black,
@@ -120,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                                   children: [
                                     DottedBorder(
                                         color: secondary,
-                                        dashPattern: [40, 20, 40, 20],
+                                        dashPattern: const [40, 20, 40, 20],
                                         borderType: BorderType.Circle,
                                         child: CircleAvatar(
                                           backgroundImage: NetworkImage(
@@ -156,18 +190,23 @@ class _HomePageState extends State<HomePage> {
                         child: GridView(
                       padding: const EdgeInsets.all(10),
                       scrollDirection: Axis.vertical,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2),
                       children: [
                         DashboardItemCard(
+                            onTap: () {
+                              BlocProvider.of<HomeBloc>(context)
+                                  .add(CourseDetailsCardClickedEvent());
+                            },
                             iconData: Icons.book,
                             headingText: 'Course details',
                             subText: 'Explore course info and details'),
                         DashboardItemCard(
-                          onTap: (){
-                            BlocProvider.of<HomeBloc>(context).add(ViewProfileCardClickedEvent());
-                            print('event added');
-                          },
+                            onTap: () {
+                              BlocProvider.of<HomeBloc>(context)
+                                  .add(ViewProfileCardClickedEvent());
+                            },
                             iconData: Icons.person,
                             headingText: 'Profile',
                             subText: 'View Your Profile'),
@@ -180,13 +219,39 @@ class _HomePageState extends State<HomePage> {
                             headingText: 'Grades',
                             subText: 'View grades and Achievements'),
                         DashboardItemCard(
+                            onTap: () {
+                              BlocProvider.of<HomeBloc>(context)
+                                  .add(TimeTableCardClickedEvent());
+                            },
                             iconData: Icons.schedule,
                             headingText: 'TimeTable',
                             subText: 'Schedules for the day'),
                         DashboardItemCard(
+                            onTap: () {
+                              BlocProvider.of<HomeBloc>(context)
+                                  .add(ProfileEditCardClickedEvent());
+                            },
                             iconData: Icons.edit,
                             headingText: 'Edit',
-                            subText: 'Edit your profile')
+                            subText: 'Edit your profile'),
+                        DashboardItemCard(
+                          onTap: () {
+                            BlocProvider.of<HomeBloc>(context)
+                                .add(LocationCardClickedEvent());
+                          },
+                          iconData: Icons.location_on,
+                          headingText: 'Location',
+                          subText: 'Get users current location',
+                        ),
+                        DashboardItemCard(
+                          iconData: Icons.logout_rounded,
+                          headingText: 'Logout',
+                          subText: 'Logout from Account',
+                          onTap: () {
+                            BlocProvider.of<HomeBloc>(context)
+                                .add(LogOutProfileCardClickedEvent());
+                          },
+                        )
                       ],
                     )),
                   ],
@@ -194,7 +259,12 @@ class _HomePageState extends State<HomePage> {
               }
               return const Center(
                 child: Dialog(
-                  child: Text('no data '),
+                  child: Text(
+                    'Data is Loading...',
+                    style: TextStyle(
+                      fontSize: 40,
+                    ),
+                  ),
                 ),
               );
             }),
@@ -202,119 +272,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// class HomePage extends StatefulWidget {
-//   const HomePage({super.key});
-
-//   @override
-//   State<HomePage> createState() => _HomePageState();
-// }
-
-// // class _HomePageState extends State<HomePage> {
-// //   final currentuser=FirebaseAuth.instance.currentUser;
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return BlocListener<HomeBloc, HomeState>(
-// //       listener: (context, state) {
-// //         if(state is ImageAddingErrorState){
-// //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-// //         }
-// //       },
-// //       child: 
-// //       Scaffold(
-// //       body: Container(
-// //         height: setScreenHeight(context, 1),
-// //         width: setScreenWidth(context, 1),
-// //         child: Stack(
-// //           children: [
-// //             Positioned(
-// //               top: -100,
-// //               child: Container(
-// //                 height: setScreenHeight(context, .4),
-// //                 width: setScreenWidth(context, 1),
-// //                 decoration: BoxDecoration(
-// //                   color: primary,
-// //                   borderRadius: BorderRadius.circular(20)
-// //                 ),
-// //                 child: SafeArea(child: Column(children: [
-// //                   SizedBox(height: setScreenHeight(context, .2),),
-// //                   Row(children: [
-// //                     SizedBox(width: setScreenWidth(context, .6),
-// //                     child: Padding(
-// //                       padding: const EdgeInsets.only(left: 10),
-// //                       child: StreamBuilder<DocumentSnapshot>(stream:FirebaseFirestore
-// //                       .instance
-// //                       .collection('studentdata')
-// //                       .doc(currentuser!.uid)
-// //                       .snapshots(),
-                      
-// //                         builder: (context,snapshot){
-// //                           if(snapshot.connectionState==ConnectionState.waiting){
-// //                             return Center(
-// //                               child: CircularProgressIndicator(),
-// //                             );
-// //                           }
-// //                           if(snapshot.hasData){
-// //                             final data=snapshot.data?.data() as Map<String,dynamic>?;
-// //                             return Column(
-// //                         crossAxisAlignment: CrossAxisAlignment.start,
-// //                         children: [
-                          
-// //                          setText(text: 'Name: ${data!['username']}'),
-// //                          setText(text: 'Email: ${data['email']}'),
-                       
-                        
-// //                         ],
-// //                       );
-                            
-// //                           }return Container();
-// //                         })
-// //                     ),
-// //                     ),
-// //                     DottedBorder(
-                      // color: secondary,
-                      // dashPattern: [40, 20,40,20],
-                      // borderType: BorderType.Circle,
-// //                       child: CircleAvatar(
-// //                         radius: 50,
-// //                         child: IconButton(onPressed: (){
-// //                           BlocProvider.of<HomeBloc>(context).add(ImagePickerButtonClickedEvent(uid: currentuser!.uid));
-// //                         }, icon: Icon(Icons.add),iconSize: 50,),
-// //                         ))
-// //                   ],),
-// //                 ],)),
-// //               ))
-// //           ],
-// //         ),
-// //       ),
-
-// //     )
-// //     );
-// //   }
-// // }

@@ -1,0 +1,29 @@
+        if (state is ImageAddingLoadingState) {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              });
+        } else if (state is ImageAddedCompletedState) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text('image added')));
+        } else if (state is NavigateToAddDetailsPageState) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AddDetailsWrapper()));
+        }else if(state is NavigateToViewProfilePageState){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>ViewProfilePage()));
+        }else if(state is LogoutErrorState){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error occured while signing out')));
+        }else if(state is LogoutSuccessState){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Logged out')));
+          Navigator.pop(context);
+        }else if(state is NavigateToCourseDetailsState){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>CourseDetails()));
+        }else if(state is NavigateToTimeTablePageState){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>TimetableScreen()));
+        }
+
+        ------------------------------------------------------------------------------------------------------------------------------------------

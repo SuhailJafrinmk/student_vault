@@ -28,13 +28,11 @@ class _PendulumAnimationState extends State<PendulumAnimation> with SingleTicker
   void initState() {
     super.initState();
 
-    // Define the animation controller
     _controller = AnimationController(
       vsync: this,
       duration: widget.duration,
     );
 
-    // Define the animation tween
     _animation = Tween<double>(begin: -widget.swingRange, end: widget.swingRange).animate(
       CurvedAnimation(
         parent: _controller,
@@ -42,13 +40,13 @@ class _PendulumAnimationState extends State<PendulumAnimation> with SingleTicker
       ),
     );
 
-    // Repeat the animation infinitely
+
     _controller.repeat(reverse: true);
   }
 
   @override
   void dispose() {
-    _controller.dispose(); // Dispose the animation controller
+    _controller.dispose(); 
     super.dispose();
   }
 
@@ -58,7 +56,7 @@ class _PendulumAnimationState extends State<PendulumAnimation> with SingleTicker
       animation: _controller,
       builder: (BuildContext context, Widget? child) {
         return Transform.translate(
-          offset: Offset(_animation.value, 0), // Adjust the range and direction of the swing
+          offset: Offset(_animation.value, 0), 
           child: Material(
             elevation: 20,
             child: Container(

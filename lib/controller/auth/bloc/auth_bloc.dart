@@ -24,10 +24,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       LoginPageNavigateEvent event, Emitter<AuthState> emit) {
     emit(LoginPageNavigatedState());
   }
-  
+
   //function to emit state for navigating to sign up page
   FutureOr<void> loginPageSignupButtonClickedEvent(
-      LoginPageSignupButtonClickedEvent event, Emitter<AuthState> emit) { 
+      LoginPageSignupButtonClickedEvent event, Emitter<AuthState> emit) {
     emit(RegisterPageNavigateState());
     print('the state of sign up button clicked is emitted');
   }
@@ -37,20 +37,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       emit(LogginLoadedState());
       UserCredential credential = await firebaseAuth.signInWithEmailAndPassword(
-          email: event.email, password: event.password);
+      email: event.email,
+      password: event.password
+      );
       user = credential.user;
       print('logged in success');
       emit(LoggedInSuccessState());
-    } catch (e) {
-      print('un able to login error occured');
+    } on FirebaseAuthException catch(e){
+      print(e);
+       emit(LoggedInErrorState(message: '$e User not found'));
+   
+      // if(e.code=='user-not-found'){
+      //   emit(LoggedInErrorState(message: 'User not found'));
+      // }else if(e.code=='wrong-password'){
+      //   emit(LoggedInErrorState(message: 'Incorrect password'));
+      // }
+    }
+    catch (e) {
       emit(LoggedInErrorState(message: e.toString()));
     }
   }
 
+
   FutureOr<void> registerButtonClickedEvent(
       RegisterButtonClickedEvent event, Emitter<AuthState> emit) async {
-        print('funtoin stareted');
-        
+    print('funtoin stareted');
+
     try {
       emit(LogginLoadedState());
       UserCredential credential =
@@ -71,7 +83,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           .collection('studentdata')
           .doc(currentuser.uid)
           .set(model.toMap());
-           
+
       emit(RegisterSuccessState());
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

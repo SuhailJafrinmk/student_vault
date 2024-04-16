@@ -28,6 +28,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -40,24 +41,27 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is RegisterPageNavigateState) {
-            print('printing on login page');
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => const SignUpPageWrapper()));
+          } else if (state is LoggedInErrorState) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.message)));
           } else if (state is LogginLoadedState) {
             showDialog(
                 context: context,
-                builder: (context) => Center(
-                      child: CircularProgressIndicator(
+                builder: (context) => const Center(
+                      child:  CircularProgressIndicator(
                         color: secondary,
                       ),
                     ));
           } else if (state is LoggedInSuccessState) {
+            Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Logged in successfully')));
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => HomePageWrapper()));
+                const SnackBar(content: Text('Logged in successfully')));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const HomePageWrapper()));
           }
         },
         child: Scaffold(
@@ -87,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                             width: width * .7,
                             height: height * .4,
                             color: secondary,
-                            duration: Duration(seconds: 2),
+                            duration: const Duration(seconds: 2),
                             swingRange: 10),
                       )),
                   Positioned(
@@ -97,7 +101,7 @@ class _LoginPageState extends State<LoginPage> {
                         filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                         child: SingleChildScrollView(
                           child: Container(
-                            padding: EdgeInsets.only(left: 20, right: 20),
+                            padding: const EdgeInsets.only(left: 20, right: 20),
                             height: height * .55,
                             width: width * .95,
                             decoration: BoxDecoration(
@@ -108,17 +112,18 @@ class _LoginPageState extends State<LoginPage> {
                               key: formkey,
                               child: Column(
                                 children: [
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 15,
                                   ),
                                   setText(
                                       text: 'Welcome Back!!!',
                                       size: 40,
                                       color: Colors.white),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 30,
                                   ),
                                   TextfieldCustom(
+                                    prefixIcon: const Icon(Icons.email,color: Colors.white,),
                                       labelText: 'Email',
                                       controller: emailController,
                                       validator: (value) {
@@ -132,10 +137,11 @@ class _LoginPageState extends State<LoginPage> {
                                         }
                                         return null;
                                       }),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 10,
                                   ),
                                   TextfieldCustom(
+                                      prefixIcon: const Icon(Icons.lock,color: Colors.white,),
                                       labelText: 'Password',
                                       controller: passwordController,
                                       validator: (value) {
@@ -144,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                                         }
                                         return null;
                                       }),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 20,
                                   ),
                                   CustomButton(
@@ -155,8 +161,13 @@ class _LoginPageState extends State<LoginPage> {
                                                 email: emailController.text,
                                                 password:
                                                     passwordController.text));
-                                      }else{
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Invalid credentials')));
+                                        emailController.clear();
+                                        passwordController.clear();
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                                content: Text(
+                                                    'Invalid credentials')));
                                       }
                                     },
                                     height: 60,
@@ -172,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 50,
                                       ),
                                       setText(

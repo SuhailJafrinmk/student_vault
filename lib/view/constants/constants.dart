@@ -23,6 +23,11 @@ double setScreenHeight(BuildContext context,double value){
 double setScreenWidth(BuildContext context,double value){
   return MediaQuery.of(context).size.width*value;
 }
- final phoneRegExp = RegExp(r'^[6-9]\d{9}$');
+final phoneRegExp = RegExp(r'^[6-9]\d{9}$');
+final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+final RegExp lengthRegExp = RegExp(r'^.{2,50}$');
+final RegExp contentRegExp = RegExp(r'^[a-zA-Z\s]+$');
+final RegExp rollNumberRegExp = RegExp(r'^[0-9]{2,20}$');
+final RegExp birthdayRegExp = RegExp(r'^(0[1-9]|[1-2][0-9]|3[0-1])/(0[1-9]|1[0-2])/\d{4}$');
+final RegExp classDivisionRegExp = RegExp(r'^[A-Z]$');
 
- final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');

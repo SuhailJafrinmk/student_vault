@@ -84,9 +84,17 @@ class _SignUpPageState extends State<SignUpPage> {
                                 labelText: 'Username',
                                 controller: userNameController,
                                 validator: (value) {
+                                   final RegExp lengthRegExp = RegExp(r'^.{3,16}$');
+                                  final RegExp contentRegExp = RegExp(r'^[a-zA-Z0-9_]+$');
                                   if (value == null || value.isEmpty) {
                                     return 'Name is required';
                                   }
+                                  if(!lengthRegExp.hasMatch(value)){
+                                    return 'Invalid username. Username must be between 3 and 16 characters long';
+                                  }
+                                  if (!contentRegExp.hasMatch(value)) {
+                                     return 'Username can only contain letters, digits, and underscores';
+                                     }
                                   return null;
                                 }),
                             const SizedBox(

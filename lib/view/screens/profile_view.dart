@@ -9,6 +9,7 @@ class ViewProfilePage extends StatelessWidget {
     String defaultImage =
       'https://res.cloudinary.com/dccos4vab/image/upload/v1712903228/73-730477_first-name-profile-image-placeholder-png_ddrkew.png';
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +26,7 @@ class ViewProfilePage extends StatelessWidget {
         .doc(currentUser!.uid)
         .snapshots(),
        builder: (context,snapshot){
-        final data=snapshot.data?.data() as Map<String,dynamic>;
+        final data=snapshot.data?.data() as Map<String,dynamic>?;
 return Stack(
   children: [
     // First Container
@@ -38,7 +39,10 @@ return Stack(
         width: setScreenWidth(context, 1),
         color: primary,
         child: Center(
-          child: setText(text: 'StudentVault',size: 30,fontWeight: FontWeight.w900),
+          child: Material(
+            elevation: 10,
+            color: Colors.transparent,
+            child: setText(text: 'StudentVault',size: 30,fontWeight: FontWeight.w900)),
         ),
       ),
     ),
@@ -47,44 +51,42 @@ return Stack(
       child: Container(
         child: Column(
           children: [
-            SizedBox(height: 60,),
+            const SizedBox(height: 60,),
             ViewPageTile(children: [
-              setText(size: 20,text: 'Personal Details---------',color: quaternary,fontWeight: FontWeight.w900),
-              setText(text: 'Firstname:${data['firstName']}',color: quaternary),
-              setText(text: 'Lastname:${data['lastName']}',color: quaternary),
-              setText(text: 'Birthday:${data['birthday']}',color: quaternary),
-              setText(text: 'Age:${data['age']}',color: quaternary),
-              setText(text: 'Email:${data['email']}',color: quaternary),
-              setText(text: 'Address:${data['address']}',color: quaternary)
+              setText(size: 25,text: 'Personal Details---------',color: quaternary,fontWeight: FontWeight.w900),
+              setText(text: 'Firstname:${data?['firstName']}',color: quaternary),
+              setText(text: 'Lastname:${data?['lastName']}',color: quaternary),
+              setText(text: 'Birthday:${data?['birthday']}',color: quaternary),
+              setText(text: 'Age:${data?['age']}',color: quaternary),
+              setText(text: 'Email:${data?['email']}',color: quaternary),
+              setText(text: 'Address:${data?['address']}',color: quaternary)
+            ]),
+            const SizedBox(height: 10,),
+            ViewPageTile(children: [
+              setText(size: 25,text: 'Parents information-----------',color: quaternary,fontWeight: FontWeight.w900),
+              setText(text: 'Fathers name:${data?['fathersName']}',color: quaternary),
+              setText(text: 'Mothers name:${data?['mothersName']}',color: quaternary),
+              setText(text: 'Parent contact:${data?['parentContact']}',color: quaternary),
             ]),
             SizedBox(height: 10,),
             ViewPageTile(children: [
-              setText(size: 20,text: 'Parents information',color: quaternary,fontWeight: FontWeight.w900),
-              setText(text: 'Fathers name:${data['fathersName']}',color: quaternary),
-              setText(text: 'Mothers name:${data['mothersName']}',color: quaternary),
-              setText(text: 'Parent contact:${data['parentContact']}',color: quaternary),
-            ]),
-            SizedBox(height: 10,),
-            ViewPageTile(children: [
-              setText(size: 20,text: 'Academic information',color: quaternary,fontWeight: FontWeight.w900),
-              setText(text: 'School name:${data['schoolName']}',color: quaternary),
-              setText(text: 'Class:${data['studentclass']}',color: quaternary),
-              setText(text: 'Division:${data['division']}',color: quaternary),
-              setText(text: 'Roll number:${data['rollNo']}',color: quaternary),
-              setText(text: 'Admission number:${data['admissionNumber']}',color: quaternary),
+              setText(size: 25,text: 'Academic information------------',color: quaternary,fontWeight: FontWeight.w900),
+              setText(text: 'School name:${data?['schoolName']}',color: quaternary),
+              setText(text: 'Class:${data?['studentclass']}',color: quaternary),
+              setText(text: 'Division:${data?['division']}',color: quaternary),
+              setText(text: 'Roll number:${data?['rollNo']}',color: quaternary),
+              setText(text: 'Admission number:${data?['admissionNumber']}',color: quaternary),
             ]),
           ],
         ),
       ),
     ),
-    // CircleAvatar centered between the two containers
     Positioned(
-      top: 90, // Adjust the top position to center the avatar vertically
-      left: 30,// Adjust the left position to center the avatar horizontally
+      top: 90,
+      left: 30,
       child: CircleAvatar(
         radius: 50,
-        backgroundImage: NetworkImage(data['userProfile'] ?? defaultImage),
-         // Or use NetworkImage for remote images
+        backgroundImage: NetworkImage(data?['userProfile'] ?? defaultImage),
       ),
     ),
   ],

@@ -15,3 +15,13 @@ class AddDetailsButtonClickedEvent extends HomeEvent{
 }
 
 class ViewProfileCardClickedEvent extends HomeEvent{}
+
+class LogOutProfileCardClickedEvent extends HomeEvent{}
+
+class CourseDetailsCardClickedEvent extends HomeEvent{}
+
+class TimeTableCardClickedEvent extends HomeEvent{}
+
+class ProfileEditCardClickedEvent extends HomeEvent{}
+
+class LocationCardClickedEvent extends HomeEvent{}

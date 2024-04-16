@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +17,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ImagePickerButtonClickedEvent>(imagePickerButtonClickedEvent);
     on<AddDetailsButtonClickedEvent>(addDetailsButtonClickedEvent);
     on<ViewProfileCardClickedEvent>(viewProfileCardClickedEvent);
+    on<LogOutProfileCardClickedEvent>(logOutProfileCardClickedEvent);
+    on<CourseDetailsCardClickedEvent>(courseDetailsCardClickedEvent);
+    on<TimeTableCardClickedEvent>(timeTableCardClickedEvent);
+    on<ProfileEditCardClickedEvent>(profileEditCardClickedEvent);
+    on<LocationCardClickedEvent>(locationCardClickedEvent);
   }
 
 //adding image to the curresponding profile
@@ -58,5 +64,32 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   //state emitted for naviagting to details page
   FutureOr<void> viewProfileCardClickedEvent(ViewProfileCardClickedEvent event, Emitter<HomeState> emit) {
     emit(NavigateToViewProfilePageState());
+  }
+
+  FutureOr<void> logOutProfileCardClickedEvent(LogOutProfileCardClickedEvent event, Emitter<HomeState> emit)async {
+    FirebaseAuth firebaseAuth=FirebaseAuth.instance;
+    try{
+      await firebaseAuth.signOut();
+      emit(LogoutSuccessState());
+    }catch(e){
+      print('some error occured while signing out');
+      emit(LogoutErrorState());
+    }
+  }
+
+  FutureOr<void> courseDetailsCardClickedEvent(CourseDetailsCardClickedEvent event, Emitter<HomeState> emit) {
+    emit(NavigateToCourseDetailsState());
+  }
+
+  FutureOr<void> timeTableCardClickedEvent(TimeTableCardClickedEvent event, Emitter<HomeState> emit) {
+    emit(NavigateToTimeTablePageState());
+  }
+
+  FutureOr<void> profileEditCardClickedEvent(ProfileEditCardClickedEvent event, Emitter<HomeState> emit) {
+    emit(NavigateToEditProfilePageState());
+  }
+
+  FutureOr<void> locationCardClickedEvent(LocationCardClickedEvent event, Emitter<HomeState> emit) {
+    emit(NavigateToLocationPageState());
   }
 }

@@ -16,7 +16,6 @@ class DetailsAddedErrorState extends DetailsState{
   DetailsAddedErrorState({required this.error});
 }
 
-class DetailsAddingLoadingState extends DetailsState{
+class DetailsAddingLoadingState extends DetailsState{}
 
-}
 

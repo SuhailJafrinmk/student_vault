@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:student_vault/view/constants/constants.dart';
 
@@ -10,7 +10,7 @@ class ViewPageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: 1.0,
+      elevation: 5.0,
       borderRadius: BorderRadius.circular(10),
       child: Container(
         width: setScreenWidth(context, .99),
